@@ -1,0 +1,11 @@
+services:
+  outpost:
+    image: outpost
+    container_name: outpost
+    hostname: outpost
+    # keep input open
+    stdin_open: true
+    tty: true
+    #
+    volumes:
+      - ./vol/home:/home/a
