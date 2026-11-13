@@ -21,7 +21,7 @@ main() {
 check_version() {
     if [[ -z "${OUTPOST_VERSION:-}" ]]; then
         echo "ERROR: OUTPOST_VERSION is not set" >&2
-        echo "Usage: OUTPOST_VERSION=0.1.0 ./do-push" >&2
+        echo "Usage: OUTPOST_VERSION=0.1.0 ./do/push" >&2
         exit 1
     fi
 
@@ -46,7 +46,7 @@ check_local_images() {
     for tag in "${OUTPOST_VERSION}" latest; do
         if ! sudo docker image inspect "${IMAGE}:${tag}" >/dev/null 2>&1; then
             echo "ERROR: Local image not found: ${IMAGE}:${tag}" >&2
-            echo "Run OUTPOST_VERSION=${OUTPOST_VERSION} ./do-build first." >&2
+            echo "Run OUTPOST_VERSION=${OUTPOST_VERSION} ./do/build first." >&2
             exit 1
         fi
     done
