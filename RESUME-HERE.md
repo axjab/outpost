@@ -1,4 +1,9 @@
 
+
+fixed mullvad issue, and build works. Proceed to next goal
+
+---
+
 Current build with core package failed due to mullvad:
 
 > Yes. Remove mullvad-vpn from core and put it in desktop-pkg if your desktops still need it. That lets Outpost use the shared core package without pulling in the Mullvad app, which expects systemd. github.com
