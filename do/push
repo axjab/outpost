@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly IMAGE="ghcr.io/axjab/outpost"
+
+main() {
+    check_version
+    check_dependencies
+    check_local_images
+
+    echo "Pushing ${IMAGE}:${OUTPOST_VERSION}"
+    docker push "${IMAGE}:${OUTPOST_VERSION}"
+
+    echo "Pushing ${IMAGE}:latest"
+    docker push "${IMAGE}:latest"
+
+    echo "Push complete: ${IMAGE}"
+}
+
+check_version() {
+    if [[ -z "${OUTPOST_VERSION:-}" ]]; then
+        echo "ERROR: OUTPOST_VERSION is not set" >&2
+        echo "Usage: OUTPOST_VERSION=0.1.0 ./do/push" >&2
+        exit 1
+    fi
+
+    if [[ ! "${OUTPOST_VERSION}" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ || "${OUTPOST_VERSION}" == "latest" ]]; then
+        echo "ERROR: Invalid OUTPOST_VERSION: ${OUTPOST_VERSION}" >&2
+        exit 1
+    fi
+}
+
+check_dependencies() {
+    local command
+    for command in docker; do
+        if ! command -v "${command}" >/dev/null 2>&1; then
+            echo "ERROR: Required command not found: ${command}" >&2
+            exit 1
+        fi
+    done
+}
+
+check_local_images() {
+    local tag
+    for tag in "${OUTPOST_VERSION}" latest; do
+        if ! docker image inspect "${IMAGE}:${tag}" >/dev/null 2>&1; then
+            echo "ERROR: Local image not found: ${IMAGE}:${tag}" >&2
+            echo "Run OUTPOST_VERSION=${OUTPOST_VERSION} ./do/build first." >&2
+            exit 1
+        fi
+    done
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi

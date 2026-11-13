@@ -1,3 +1,44 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-docker build -t outpost .
+set -euo pipefail
+
+readonly IMAGE="ghcr.io/axjab/outpost"
+
+main() {
+    check_version
+    check_dependencies
+
+    echo "Building ${IMAGE}:latest and ${IMAGE}:${OUTPOST_VERSION}"
+
+    docker build \
+        -t "${IMAGE}:latest" \
+        -t "${IMAGE}:${OUTPOST_VERSION}" \
+        .
+}
+
+check_version() {
+    if [[ -z "${OUTPOST_VERSION:-}" ]]; then
+        echo "ERROR: OUTPOST_VERSION is not set" >&2
+        echo "Usage: OUTPOST_VERSION=0.1.0 ./do/build" >&2
+        exit 1
+    fi
+
+    if [[ ! "${OUTPOST_VERSION}" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ || "${OUTPOST_VERSION}" == "latest" ]]; then
+        echo "ERROR: Invalid OUTPOST_VERSION: ${OUTPOST_VERSION}" >&2
+        exit 1
+    fi
+}
+
+check_dependencies() {
+    local command
+    for command in docker; do
+        if ! command -v "${command}" >/dev/null 2>&1; then
+            echo "ERROR: Required command not found: ${command}" >&2
+            exit 1
+        fi
+    done
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi

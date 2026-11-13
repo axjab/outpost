@@ -1,6 +1,6 @@
 services:
   outpost:
-    image: outpost
+    image: ghcr.io/axjab/outpost
     container_name: outpost
     hostname: outpost
     # keep input open
