@@ -1,1 +1,1 @@
-docker run --rm -it --hostname ghcr.io/axjab/outpost outpost
+docker run --rm -it --hostname outpost ghcr.io/axjab/outpost
