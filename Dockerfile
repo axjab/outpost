@@ -2,10 +2,18 @@ FROM debian:trixie-slim
 
 RUN useradd --create-home --user-group --shell /bin/bash a
 
+COPY dep/nb.sh /tmp/nb-install.sh
+
+ENV EDITOR=hx
+ENV VISUAL=hx
+
 RUN set -eu; \
     export DEBIAN_FRONTEND=noninteractive; \
     apt-get update; \
     apt-get install -y --no-install-recommends ca-certificates curl sudo; \
+    printf '%s\n' 'a ALL=(root) NOPASSWD: /usr/bin/apt, /usr/bin/apt-get' \
+        > /etc/sudoers.d/outpost-apt; \
+    chmod 0440 /etc/sudoers.d/outpost-apt; \
     installer=$(mktemp); \
     curl -q --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
         --connect-timeout 10 --max-time 60 \
@@ -18,8 +26,9 @@ RUN set -eu; \
     visudo -cf /etc/sudoers; \
     runuser -u a -- /bin/sh "$installer"; \
     rm -f "$installer" /etc/sudoers.d/outpost-bootstrap /run/pkg-cli-install.lock; \
-    SUDO_FORCE_REMOVE=yes apt-get purge -y sudo; \
     apt-get install -y --no-install-recommends core; \
+    /bin/sh /tmp/nb-install.sh; \
+    rm -f /tmp/nb-install.sh; \
     rm -rf /var/lib/apt/lists/*
 
 USER a
