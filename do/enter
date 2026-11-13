@@ -1,1 +1,2 @@
- docker compose exec outpost bash
+#!/bin/bash
+docker compose exec outpost bash
