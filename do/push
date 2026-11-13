@@ -10,10 +10,10 @@ main() {
     check_local_images
 
     echo "Pushing ${IMAGE}:${OUTPOST_VERSION}"
-    sudo docker push "${IMAGE}:${OUTPOST_VERSION}"
+    docker push "${IMAGE}:${OUTPOST_VERSION}"
 
     echo "Pushing ${IMAGE}:latest"
-    sudo docker push "${IMAGE}:latest"
+    docker push "${IMAGE}:latest"
 
     echo "Push complete: ${IMAGE}"
 }
@@ -33,7 +33,7 @@ check_version() {
 
 check_dependencies() {
     local command
-    for command in sudo docker; do
+    for command in docker; do
         if ! command -v "${command}" >/dev/null 2>&1; then
             echo "ERROR: Required command not found: ${command}" >&2
             exit 1
@@ -44,7 +44,7 @@ check_dependencies() {
 check_local_images() {
     local tag
     for tag in "${OUTPOST_VERSION}" latest; do
-        if ! sudo docker image inspect "${IMAGE}:${tag}" >/dev/null 2>&1; then
+        if ! docker image inspect "${IMAGE}:${tag}" >/dev/null 2>&1; then
             echo "ERROR: Local image not found: ${IMAGE}:${tag}" >&2
             echo "Run OUTPOST_VERSION=${OUTPOST_VERSION} ./do/build first." >&2
             exit 1
