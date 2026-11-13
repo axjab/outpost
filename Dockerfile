@@ -2,6 +2,8 @@ FROM debian:trixie-slim
 
 RUN useradd --create-home --user-group --shell /bin/bash a
 
+COPY dep/nb.sh /tmp/nb-install.sh
+
 RUN set -eu; \
     export DEBIAN_FRONTEND=noninteractive; \
     apt-get update; \
@@ -18,6 +20,8 @@ RUN set -eu; \
     visudo -cf /etc/sudoers; \
     runuser -u a -- /bin/sh "$installer"; \
     rm -f "$installer" /etc/sudoers.d/outpost-bootstrap /run/pkg-cli-install.lock; \
+    /bin/sh /tmp/nb-install.sh; \
+    rm -f /tmp/nb-install.sh; \
     SUDO_FORCE_REMOVE=yes apt-get purge -y sudo; \
     apt-get install -y --no-install-recommends core; \
     rm -rf /var/lib/apt/lists/*
