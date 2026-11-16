@@ -11,6 +11,7 @@ main() {
     echo "Building ${IMAGE}:latest and ${IMAGE}:${OUTPOST_VERSION}"
 
     docker build \
+        --build-arg "OUTPOST_VERSION=${OUTPOST_VERSION}" \
         -t "${IMAGE}:latest" \
         -t "${IMAGE}:${OUTPOST_VERSION}" \
         .
