@@ -5,13 +5,13 @@ readonly SCRIPT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)/bin/outp
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
-mkdir -m 700 "$tmp/policies"
+mkdir -m 700 "$tmp/policies" "$tmp/empty"
 cat > "$tmp/policies/10-pass.check" <<'POLICY'
 #!/usr/bin/env bash
 exit 0
 POLICY
 
-if "$SCRIPT" --policy-dir "$tmp/policies" --quiet 2>/dev/null; then
+if bash "$SCRIPT" --policy-dir "$tmp/policies" --quiet 2>/dev/null; then
     :
 else
     printf 'Expected passing policy set to be kindled.\n' >&2
