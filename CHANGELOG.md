@@ -8,3 +8,7 @@ Version 0.1.0
 
 Version 0.0.0
   - it works
+Unreleased
+  - Show Fastfetch, the image version, and policy-based kindling status at interactive login.
+  - Add composable kindling checks based on the legacy Kindle diagnostics.
+  - Use the existing Fastfetch installation from `core`; do not install it separately.
