@@ -61,9 +61,9 @@ For the full operating contract, read [../AGENTS.md](../AGENTS.md); for actual p
 
 - Machine information is not collected interactively: pretty hostname `Outpost: <system hostname>`, no location, tag `virtual`, default user `a`. First-time-install detection is deferred.
 - A reusable image must not contain a read-only marker claiming that every instance is already kindled. If implemented later, local completion state belongs under per-instance persistent `/var/lib/outpost/`; HQ enrollment and local completion state remain distinct. No state mechanism is implemented yet.
-- Fastfetch comes from the existing `core` metapackage and runs on user `a`'s interactive Bash terminal startup.
+- Fastfetch comes from the existing `core` metapackage and runs from `/etc/profile.d/outpost.sh` in interactive login shells. The hook is image-owned and does not depend on `/home/a`, which may be mounted.
 
 
 ## Login status
 
-Interactive Bash login shows Fastfetch, the baked Outpost version, and whether every configured kindling policy passes. Policies live in `/etc/outpost/kindling.d/*.check`; adding or removing a check changes the required policy set. No configured policies or any failed/unverifiable check means Unkindled. Fastfetch comes from `core`, not a separate package install.
+Interactive login shells show Fastfetch, the baked Outpost version, and whether every configured kindling policy passes. The hook lives in `/etc/profile.d/outpost.sh`, not in the mountable home directory. Policies live in `/etc/outpost/kindling.d/*.check`; adding or removing a check changes the required policy set. No configured policies or any failed/unverifiable check means Unkindled. Fastfetch comes from `core`, not a separate package install.
