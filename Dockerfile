@@ -20,7 +20,8 @@ COPY bin/outpost-kindling-status /tmp/outpost-kindling-status
 COPY lib/outpost-kindling/common.sh /tmp/outpost-kindling-common.sh
 COPY etc/outpost/kindling.d/ /tmp/kindling.d/
 
-RUN useradd --create-home --user-group --shell /bin/bash a; \
+RUN set -eu; \
+    useradd --create-home --user-group --shell /bin/bash a; \
     install -D -m 0755 /tmp/outpost-kindling-status /usr/local/bin/outpost-kindling-status; \
     install -D -m 0644 /tmp/outpost-kindling-common.sh /usr/lib/outpost-kindling/common.sh; \
     install -d -m 0755 /etc/outpost/kindling.d; \
