@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+command -v tailscale >/dev/null 2>&1
+command -v timeout >/dev/null 2>&1
+command -v jq >/dev/null 2>&1
+timeout 4 sudo -n tailscale status --json | jq -e '.BackendState == "Running"' >/dev/null
