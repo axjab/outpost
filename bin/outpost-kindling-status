@@ -4,6 +4,7 @@ set -euo pipefail
 readonly DEFAULT_POLICY_DIR=/etc/outpost/kindling.d
 policy_dir=$DEFAULT_POLICY_DIR
 verbose=false
+quiet=false
 
 usage() {
     printf 'Usage: %s [--policy-dir DIR] [--verbose]\n' "${0##*/}" >&2
@@ -19,6 +20,10 @@ main() {
                 ;;
             --verbose)
                 verbose=true
+                shift
+                ;;
+            --quiet)
+                quiet=true
                 shift
                 ;;
             -h|--help)
