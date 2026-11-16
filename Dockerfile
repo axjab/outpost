@@ -57,4 +57,4 @@ RUN set -eu; \
 USER a
 WORKDIR /home/a
 
-CMD ["/bin/bash"]
+CMD ["/bin/bash", "--login"]
