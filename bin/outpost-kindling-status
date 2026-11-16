@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly DEFAULT_POLICY_DIR=/etc/outpost/kindling.d
+policy_dir=$DEFAULT_POLICY_DIR
+verbose=false
+
+usage() {
+    printf 'Usage: %s [--policy-dir DIR] [--verbose]\n' "${0##*/}" >&2
+}
+
+main() {
+    while (($#)); do
+        case "$1" in
+            --policy-dir)
+                (($# >= 2)) || { usage; return 2; }
+                policy_dir=$2
+                shift 2
+                ;;
+            --verbose)
+                verbose=true
+                shift
+                ;;
+            -h|--help)
+                usage
+                return 0
+                ;;
+            *)
+                usage
+                return 2
+                ;;
+        esac
+    done
+
+    if all_policies_pass; then
+        [[ $verbose == false ]] || printf 'All kindling policies passed.\n' >&2
+        printf 'Kindled\n'
+        return 0
+    fi
+
+    printf 'Unkindled\n'
+    return 1
+}
+
+trusted_path() {
+    local path=$1 owner mode
+
+    [[ -f "$path" && ! -L "$path" ]] || return 1
+    owner=$(stat -c '%u' -- "$path") || return 1
+    mode=$(stat -c '%a' -- "$path") || return 1
+    [[ $owner == 0 || $owner == "$EUID" ]] || return 1
+    (( (8#$mode & 0022) == 0 ))
+}
+
+all_policies_pass() {
+    local policy owner mode
+    local -a policies=()
+
+    [[ -d "$policy_dir" && ! -L "$policy_dir" ]] || {
+        [[ $verbose == false ]] || printf 'Missing policy directory: %s\n' "$policy_dir" >&2
+        return 1
+    }
+
+    owner=$(stat -c '%u' -- "$policy_dir") || return 1
+    mode=$(stat -c '%a' -- "$policy_dir") || return 1
+    [[ $owner == 0 || $owner == "$EUID" ]] || return 1
+    (( (8#$mode & 0022) == 0 )) || return 1
+
+    shopt -s nullglob
+    policies=("$policy_dir"/*.check)
+    shopt -u nullglob
+
+    if (("${#policies[@]}" == 0)); then
+        [[ $verbose == false ]] || printf 'No kindling policies configured.\n' >&2
+        return 1
+    fi
+
+    for policy in "${policies[@]}"; do
+        if ! trusted_path "$policy"; then
+            [[ $verbose == false ]] || printf 'Untrusted policy: %s\n' "$policy" >&2
+            return 1
+        fi
+
+        if ! bash "$policy" >/dev/null 2>&1; then
+            [[ $verbose == false ]] || printf 'Policy failed: %s\n' "${policy##*/}" >&2
+            return 1
+        fi
+    done
+}
+
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
+    main "$@"
+fi
