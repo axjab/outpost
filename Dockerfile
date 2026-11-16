@@ -18,6 +18,7 @@ COPY dep/nb.sh /tmp/nb-install.sh
 COPY bin/outpost-kindling-status /tmp/outpost-kindling-status
 COPY lib/outpost-kindling/common.sh /tmp/outpost-kindling-common.sh
 COPY etc/outpost/kindling.d/ /tmp/kindling.d/
+COPY etc/profile.d/outpost.sh /tmp/outpost-login.sh
 
 RUN set -eu; \
     useradd --create-home --user-group --shell /bin/bash a; \
@@ -25,8 +26,9 @@ RUN set -eu; \
     install -D -m 0644 /tmp/outpost-kindling-common.sh /usr/lib/outpost-kindling/common.sh; \
     install -d -m 0755 /etc/outpost/kindling.d; \
     install -m 0644 /tmp/kindling.d/*.check /etc/outpost/kindling.d/; \
+    install -D -m 0644 /tmp/outpost-login.sh /etc/profile.d/outpost.sh; \
     printf '%s\n' "$OUTPOST_VERSION" > /etc/outpost/version; \
-    rm -rf /tmp/outpost-kindling-status /tmp/outpost-kindling-common.sh /tmp/kindling.d
+    rm -rf /tmp/outpost-kindling-status /tmp/outpost-kindling-common.sh /tmp/kindling.d /tmp/outpost-login.sh
 
 RUN set -eu; \
     export DEBIAN_FRONTEND=noninteractive; \
@@ -50,20 +52,6 @@ RUN set -eu; \
     apt-get install -y --no-install-recommends core; \
     /bin/sh /tmp/nb-install.sh; \
     rm -f /tmp/nb-install.sh; \
-    printf '%s\n' \
-        '' \
-        '# Show Outpost status once per interactive terminal session.' \
-        'if [[ $- == *i* && -t 1 && -z ${OUTPOST_LOGIN_SHOWN:-} ]]; then' \
-        '    export OUTPOST_LOGIN_SHOWN=1' \
-        '    fastfetch' \
-        '    printf "Outpost version: %s\\n" "$(cat /etc/outpost/version)"' \
-        '    if /usr/local/bin/outpost-kindling-status --quiet; then' \
-        '        printf "Kindling: Kindled\\n"' \
-        '    else' \
-        '        printf "Kindling: Unkindled\\n"' \
-        '    fi' \
-        'fi' \
-        >> /home/a/.bashrc; \
     rm -rf /var/lib/apt/lists/*
 
 USER a
