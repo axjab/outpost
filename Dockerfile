@@ -6,6 +6,9 @@ FROM node:26-slim AS node
 # Operating system
 FROM debian:trixie-slim
 
+ARG OUTPOST_VERSION=dev
+LABEL org.opencontainers.image.version="${OUTPOST_VERSION}"
+
 ENV EDITOR=hx
 ENV VISUAL=hx
 
@@ -13,13 +16,22 @@ ENV VISUAL=hx
 COPY --from=node /usr/local/ /usr/local/
 
 COPY dep/nb.sh /tmp/nb-install.sh
+COPY bin/outpost-kindling-status /tmp/outpost-kindling-status
+COPY lib/outpost-kindling/common.sh /tmp/outpost-kindling-common.sh
+COPY etc/outpost/kindling.d/ /tmp/kindling.d/
 
-RUN useradd --create-home --user-group --shell /bin/bash a
+RUN useradd --create-home --user-group --shell /bin/bash a; \
+    install -D -m 0755 /tmp/outpost-kindling-status /usr/local/bin/outpost-kindling-status; \
+    install -D -m 0644 /tmp/outpost-kindling-common.sh /usr/lib/outpost-kindling/common.sh; \
+    install -d -m 0755 /etc/outpost/kindling.d; \
+    install -m 0644 /tmp/kindling.d/*.check /etc/outpost/kindling.d/; \
+    printf '%s\\n' "$OUTPOST_VERSION" > /etc/outpost/version; \
+    rm -rf /tmp/outpost-kindling-status /tmp/outpost-kindling-common.sh /tmp/kindling.d
 
 RUN set -eu; \
     export DEBIAN_FRONTEND=noninteractive; \
     apt-get update; \
-    apt-get install -y --no-install-recommends ca-certificates curl fastfetch sudo; \
+    apt-get install -y --no-install-recommends ca-certificates curl sudo; \
     printf '%s\n' 'a ALL=(root) NOPASSWD: /usr/bin/apt, /usr/bin/apt-get' \
         > /etc/sudoers.d/outpost-apt; \
     chmod 0440 /etc/sudoers.d/outpost-apt; \
@@ -40,10 +52,16 @@ RUN set -eu; \
     rm -f /tmp/nb-install.sh; \
     printf '%s\n' \
         '' \
-        '# Show system information once per interactive terminal session.' \
-        'if [[ $- == *i* && -t 1 && -z ${OUTPOST_FASTFETCH_SHOWN:-} ]] && command -v fastfetch >/dev/null 2>&1; then' \
-        '    export OUTPOST_FASTFETCH_SHOWN=1' \
+        '# Show Outpost status once per interactive terminal session.' \
+        'if [[ $- == *i* && -t 1 && -z ${OUTPOST_LOGIN_SHOWN:-} ]]; then' \
+        '    export OUTPOST_LOGIN_SHOWN=1' \
         '    fastfetch' \
+        '    printf "Outpost version: %s\\n" "$(cat /etc/outpost/version)"' \
+        '    if /usr/local/bin/outpost-kindling-status --quiet; then' \
+        '        printf "Kindling: Kindled\\n"' \
+        '    else' \
+        '        printf "Kindling: Unkindled\\n"' \
+        '    fi' \
         'fi' \
         >> /home/a/.bashrc; \
     rm -rf /var/lib/apt/lists/*
