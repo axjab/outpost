@@ -55,3 +55,10 @@ No big-bang implementation. No claiming success before tests. No new Outpost CLI
 ## Agent handoff
 
 For the full operating contract, read [../AGENTS.md](../AGENTS.md); for actual progress and commits, read `../JOURNAL.md`. The **latest user request and real test output** override stale documentation.
+
+
+## Latest decisions — 2026-11-16
+
+- Machine information is not collected interactively: pretty hostname `Outpost: <system hostname>`, no location, tag `virtual`, default user `a`. First-time-install detection is deferred.
+- A reusable image must not contain a read-only marker claiming that every instance is already kindled. If implemented later, local completion state belongs under per-instance persistent `/var/lib/outpost/`; HQ enrollment and local completion state remain distinct. No state mechanism is implemented yet.
+- Fastfetch is installed from Debian Trixie and runs on user `a`'s interactive Bash terminal startup.
