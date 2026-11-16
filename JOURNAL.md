@@ -221,3 +221,14 @@ Never claim tests passed without actual results. Keep machine secrets and enroll
 - Install Debian Trixie's `fastfetch` package in the image.
 - Run it from user `a`'s interactive Bash startup file, only on a terminal, and once per inherited shell session to avoid repeating it in nested Bash shells.
 - Verification: Docker image build and interactive login remain user-side acceptance tests; no container runtime result is claimed by this change.
+
+
+## PR #4 revision — login status (2026-11-16)
+
+- Fastfetch is provided by the existing `core` metapackage; do not install it separately.
+- The image receives `OUTPOST_VERSION` as a build argument and stores it in `/etc/outpost/version`.
+- Interactive Bash login prints Fastfetch, the baked image version, and kindling status once per inherited shell session.
+- Kindling status is read-only and policy-driven. Each `/etc/outpost/kindling.d/*.check` script is one required policy; all must pass. No policies, unsafe policy files, or any failed/unverifiable policy means Unkindled. The active policy set can be changed by adding/removing check files.
+- Initial checks mirror the meaningful legacy Kindle diagnostics, excluding location (user chose to skip it) and the file-server check (legacy script skipped it): machine metadata, GPG identity, SSH identity, Git server, Tailnet, GitHub, configuration, credentials, and vault decryption.
+- Vault decryption output is discarded; no secret is printed.
+- Tests added for all-pass, one-fail, empty-policy, and unsafe-directory behavior. Docker image build/login still requires user verification.
