@@ -196,3 +196,28 @@ Never claim tests passed without actual results. Keep machine secrets and enroll
 ### Current next step
 
 - Review the public image build inputs and package closure, then publish the image as a separate task. Do not claim publication or persistence until verified.
+
+
+## Iteration 3 — Fastfetch login display and kindling-state review (2026-11-16)
+
+### Accepted machine-information decisions
+
+- Do not prompt during kindling for machine information.
+- Pretty hostname: `Outpost: <current system hostname>`.
+- Location: leave unset.
+- Tags: `virtual`.
+- Default user: `a`.
+- First-time-install detection and all other machine-information behavior are deferred to a later iteration.
+
+### Kindling-state review
+
+- Do not bake a read-only “already kindled” marker into the reusable image: every deployed instance would inherit the same marker, falsely implying that it had completed its own enrollment/provisioning.
+- If a local completion record is needed, use mutable, root-owned state under `/var/lib/outpost/`, with that path persisted independently for each outpost. A container's writable layer alone is not durable across removal/recreation.
+- Keep local completion state distinct from machine metadata in `/etc/machine-info` and from HQ's enrollment/identity records. Neither a generic machine-info file nor the mere presence of credentials proves all kindling steps succeeded.
+- This is an architectural recommendation only. No kindling-state file, first-time detection, or initialization workflow is implemented in this iteration.
+
+### Fastfetch
+
+- Install Debian Trixie's `fastfetch` package in the image.
+- Run it from user `a`'s interactive Bash startup file, only on a terminal, and once per inherited shell session to avoid repeating it in nested Bash shells.
+- Verification: Docker image build and interactive login remain user-side acceptance tests; no container runtime result is claimed by this change.
