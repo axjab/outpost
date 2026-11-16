@@ -22,7 +22,7 @@ A **public Debian OCI image** from which we can deploy multiple **persistent, in
 | **HQ / hosts-of-embers** | Intended authoritative node inventory, enrollment and telemetry. |
 | **`gopass`** | Secrets management; actual key trust/enrollment happens after instance creation. |
 
-`core` is an existing **metapackage of public dependencies** from `apt.alj.cx`; review its installed dependency closure before building it into the public image.
+`core` is an existing **metapackage of public dependencies** from `apt.alj.cx`; review its installed dependency closure before publishing the public image. The current Dockerfile also installs `nb` using `dep/nb.sh` and imports Node.js 26 plus its bundled npm from the official `node:26-slim` image.
 
 ## Project rules
 
@@ -45,11 +45,12 @@ No big-bang implementation. No claiming success before tests. No new Outpost CLI
 ## Current status / next action
 
 - Project name **Outpost committed**; repository and image will be public.
-- User-reported tree: `Dockerfile`, `JOURNAL.md`, `NOMENCLATURE.md`, `docs/NOMENCLATURE.md`, `docs/bash-engineering-SKILL.md`.
-- Minimal intended Dockerfile: `FROM debian:trixie-slim`, `CMD ["/bin/bash"]`.
-- **Not yet verified:** Kiri build/run of bare Debian on the user's machine; persistence is **not** implemented.
+- The current Dockerfile uses `node:26-slim` as a named build stage and keeps `debian:trixie-slim` as the final image. It copies `/usr/local/` from the Node.js stage, providing Node.js 26 and the npm bundled with that image.
+- The image installs the `core` metapackage and `nb` from `dep/nb.sh`; `hx` remains the configured editor.
+- **User-reported:** the integrated image builds and can be entered, and Node.js/npm are available. Exact runtime version output has not been recorded here.
+- **Not implemented:** persistent outpost storage and image publication.
 
-**First gate:** build and enter the bare image, verify Debian Trixie and `amd64`, then exit. Only afterward add persistence as the next atomic change. Keep Kindle, Ansible, Doctor daemon, and secrets out of that first test.
+**Next gate:** review the image's build inputs and installed dependency closure, then publish the image as a separate task. Do not infer persistence from an ephemeral container test.
 
 ## Agent handoff
 
