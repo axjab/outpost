@@ -329,3 +329,10 @@ Do not ask the user to repeat information already supplied, claim a future auton
 10. **Project tree uses `JOURNAL.md`**, not the older handoff filename `PROJECT-JOURNAL.md`; preserve what exists rather than silently renaming files.
 
 **When repository evidence conflicts with this document:** prioritize the user's *latest explicit instruction*, then the *actual inspected code and tests*, then maintained project decisions. Surface unresolved conflicts rather than blending incompatible versions. This document is a working contract and must be updated when the user changes an architectural decision.
+
+
+## 11. Decisions accepted — 2026-11-16
+
+- Outpost machine information is configured without prompting: pretty hostname is `Outpost: <current system hostname>`; location is left unset; host tags are `virtual`; default user is `a`. Do not add other machine-information fields or first-time detection unless requested in a later iteration.
+- Kindling-state storage review: a reusable image must not contain a read-only marker that claims an instance is already kindled. If local completion state is needed, use mutable, root-owned state under `/var/lib/outpost/` and persist that path per instance. Treat HQ enrollment/identity as separate evidence; do not infer successful kindling from generic files such as `/etc/machine-info`. Implementation is deferred.
+- Install Debian's `fastfetch` package in the image and invoke it from user `a`'s interactive Bash startup, once per inherited shell session and only when attached to a terminal.
