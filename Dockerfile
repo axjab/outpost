@@ -1,4 +1,3 @@
-
 # OUTPOST
 
 # Node.js source
@@ -26,7 +25,7 @@ RUN set -eu; \
     install -D -m 0644 /tmp/outpost-kindling-common.sh /usr/lib/outpost-kindling/common.sh; \
     install -d -m 0755 /etc/outpost/kindling.d; \
     install -m 0644 /tmp/kindling.d/*.check /etc/outpost/kindling.d/; \
-    printf '%s\\n' "$OUTPOST_VERSION" > /etc/outpost/version; \
+    printf '%s\n' "$OUTPOST_VERSION" > /etc/outpost/version; \
     rm -rf /tmp/outpost-kindling-status /tmp/outpost-kindling-common.sh /tmp/kindling.d
 
 RUN set -eu; \
