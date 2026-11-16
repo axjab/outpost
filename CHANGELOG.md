@@ -7,3 +7,7 @@ Version 0.1.0
 
 Version 0.0.0
   - it works
+Version 0.2.0
+  - Install Fastfetch and display system information when user a opens an interactive Bash terminal.
+  - Document the kindling-state storage decision; implementation remains deferred.
+
