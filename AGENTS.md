@@ -340,7 +340,7 @@ Do not ask the user to repeat information already supplied, claim a future auton
 
 ## 12. Pull request style and kindling status
 
-- Keep pull request titles and descriptions short, plain, and informal. Use a few concise bullets; avoid formal sections, lengthy context, inflated claims, and project-management language. This applies to every future Outpost pull request unless the user asks otherwise.
+- Keep pull request titles and descriptions short, plain, and informal. Use a few concise bullets; avoid formal sections, lengthy context, inflated claims, and project-management language. This applies to every pull request prepared for this user, including work in other repositories, unless the user asks otherwise.
 - The login status is computed from the active policy files in `/etc/outpost/kindling.d/*.check`. Every configured policy must pass; an empty, missing, unsafe, failed, or unverifiable policy set is **Unkindled**. Add/remove policy files to change the required set. Policy scripts must be root-owned (or owned by the invoking user for local tests), not group/world writable, and must exit 0 only when their requirement is verified.
 - The status checker is read-only. It does not use a timestamp or marker as proof of kindling. Its exit status is 0 for Kindled and 1 for Unkindled; configuration/usage errors return 2. Login displays the conservative result.
 - The image build passes `OUTPOST_VERSION` into the Dockerfile and stores it at `/etc/outpost/version`; direct Dockerfile builds default to `dev`.
