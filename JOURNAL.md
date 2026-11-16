@@ -237,5 +237,6 @@ Never claim tests passed without actual results. Keep machine secrets and enroll
 
 - The first PR #4 revision wrote the login hook into `/home/a/.bashrc`. That is unreliable because `/home/a` is a mounted volume and can hide image-provided files.
 - Move the hook to `/etc/profile.d/outpost.sh`, installed by the image. It runs for interactive login shells and keeps Fastfetch, version, and kindling output in the same order.
+- Change the image's default command to `/bin/bash --login` so the normal container entry loads `/etc/profile` and `/etc/profile.d`.
 - The hook checks for an interactive shell and a terminal, and uses the inherited `OUTPOST_LOGIN_SHOWN` variable to avoid duplicate output in nested login shells.
 - Docker build and actual login behavior still require user verification.
