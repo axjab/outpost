@@ -11,7 +11,7 @@ cat > "$tmp/policies/10-pass.check" <<'POLICY'
 exit 0
 POLICY
 
-if bash bash "$SCRIPT" --policy-dir "$tmp/policies" --quiet 2>/dev/null; then
+if bash "$SCRIPT" --policy-dir "$tmp/policies" --quiet; then
     :
 else
     printf 'Expected passing policy set to be kindled.\n' >&2
