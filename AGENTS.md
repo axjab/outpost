@@ -335,7 +335,7 @@ Do not ask the user to repeat information already supplied, claim a future auton
 
 - Outpost machine information is configured without prompting: pretty hostname is `Outpost: <current system hostname>`; location is left unset; host tags are `virtual`; default user is `a`. Do not add other machine-information fields or first-time detection unless requested in a later iteration.
 - Kindling-state storage review: a reusable image must not contain a read-only marker that claims an instance is already kindled. If local completion state is needed, use mutable, root-owned state under `/var/lib/outpost/` and persist that path per instance. Treat HQ enrollment/identity as separate evidence; do not infer successful kindling from generic files such as `/etc/machine-info`. Implementation is deferred.
-- Use the Fastfetch executable already supplied by the `core` metapackage; do not install it separately. Show it from user `a`'s interactive Bash startup, once per inherited shell session and only when attached to a terminal.
+- Use the Fastfetch executable already supplied by the `core` metapackage; do not install it separately. Show it from `/etc/profile.d/outpost.sh` in interactive login shells, once per inherited shell session and only when attached to a terminal. Do not put image-owned login behavior in `/home/a`, which may be mounted over.
 
 
 ## 12. Pull request style and kindling status
