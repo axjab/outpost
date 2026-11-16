@@ -1,6 +1,7 @@
 Unreleased
-  - Install Fastfetch and display system information when user a opens an interactive Bash terminal.
-  - Document the kindling-state storage decision; implementation remains deferred.
+  - Show Fastfetch, the image version, and policy-based kindling status at interactive login.
+  - Add composable kindling checks based on the legacy Kindle diagnostics.
+  - Use Fastfetch from the existing `core` metapackage; do not install it separately.
 
 Version 0.1.0
   - Add Node.js 26 from the official `node:26-slim` image as a multi-stage build source.
@@ -8,7 +9,3 @@ Version 0.1.0
 
 Version 0.0.0
   - it works
-Unreleased
-  - Show Fastfetch, the image version, and policy-based kindling status at interactive login.
-  - Add composable kindling checks based on the legacy Kindle diagnostics.
-  - Use the existing Fastfetch installation from `core`; do not install it separately.
