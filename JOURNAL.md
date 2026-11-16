@@ -219,7 +219,7 @@ Never claim tests passed without actual results. Keep machine secrets and enroll
 ### Fastfetch
 
 - Install Debian Trixie's `fastfetch` package in the image.
-- Run it from user `a`'s interactive Bash startup file, only on a terminal, and once per inherited shell session to avoid repeating it in nested Bash shells.
+- Run it from `/etc/profile.d/outpost.sh` in interactive login shells, only on a terminal, and once per inherited shell session to avoid repeating it in nested login shells. This keeps image-owned startup behavior outside the mountable home directory.
 - Verification: Docker image build and interactive login remain user-side acceptance tests; no container runtime result is claimed by this change.
 
 
@@ -232,3 +232,10 @@ Never claim tests passed without actual results. Keep machine secrets and enroll
 - Initial checks mirror the meaningful legacy Kindle diagnostics, excluding location (user chose to skip it) and the file-server check (legacy script skipped it): machine metadata, GPG identity, SSH identity, Git server, Tailnet, GitHub, configuration, credentials, and vault decryption.
 - Vault decryption output is discarded; no secret is printed.
 - Tests added for all-pass, one-fail, empty-policy, and unsafe-directory behavior. Docker image build/login still requires user verification.
+
+### Login hook location correction
+
+- The first PR #4 revision wrote the login hook into `/home/a/.bashrc`. That is unreliable because `/home/a` is a mounted volume and can hide image-provided files.
+- Move the hook to `/etc/profile.d/outpost.sh`, installed by the image. It runs for interactive login shells and keeps Fastfetch, version, and kindling output in the same order.
+- The hook checks for an interactive shell and a terminal, and uses the inherited `OUTPOST_LOGIN_SHOWN` variable to avoid duplicate output in nested login shells.
+- Docker build and actual login behavior still require user verification.
