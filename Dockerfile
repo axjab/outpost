@@ -1,11 +1,20 @@
+
+# OUTPOST
+
+# Node.js source
+FROM node:26-slim AS node
+# Operating system
 FROM debian:trixie-slim
-
-RUN useradd --create-home --user-group --shell /bin/bash a
-
-COPY dep/nb.sh /tmp/nb-install.sh
 
 ENV EDITOR=hx
 ENV VISUAL=hx
+
+# Import Node.js and npm from official image
+COPY --from=node /usr/local/ /usr/local/
+
+COPY dep/nb.sh /tmp/nb-install.sh
+
+RUN useradd --create-home --user-group --shell /bin/bash a
 
 RUN set -eu; \
     export DEBIAN_FRONTEND=noninteractive; \
