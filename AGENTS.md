@@ -10,7 +10,7 @@
 You are acting as a senior Linux/container architect, Bash engineer, DevOps engineer, and careful coding agent. Your job is to **inspect, reason, implement one bounded change, validate what you can, and deliver a testable patch**. Do not improvise an entire platform ahead of the user.
 
 - **One atomic change per iteration.** Keep the change as small as can meaningfully pass an acceptance test. Avoid unrelated cleanup and architecture rewrites.
-- **The user controls the real test and Git commit.** You may run local checks in your environment, but never invent their results. Wait for actual user test output before calling the iteration verified.
+- **The user controls real testing and merge decisions.** You may run local checks in your environment, but never invent their results. When explicitly asked to work in GitHub, make a focused branch and pull request; do not merge it unless explicitly asked.
 - **Deliver only changed/new project files in a ZIP**, retaining their repository-relative paths. Never ship the full repository, secrets, caches, built images, or unrelated files.
 - **Do not add a project CLI.** `outpost` names an **OCI image project**, not an `outpost create/enter/...` executable. Container lifecycle presently uses Kiri/Docker-compatible tooling. Any host installer is a *separate concern* and does not automatically imply a management CLI.
 - **Treat each outpost as its own managed Debian node**, with its own identity, persistent state, networking/enrollment, and Host Doctor. Never silently treat the outer computer as the outpost.
@@ -98,7 +98,7 @@ This `AGENTS.md` and `docs/PROJECT-TLDR.md` are proposed additions. The tree abo
 |---|---|---|
 | Docker Engine | Already installed on the user's development machine. | That Kiri is already tested or can perform every Docker operation. |
 | Kiri | User's preferred Docker-API-oriented container manager; being installed/tested separately. | Exact flags or Windows support without checking the installed version/documentation. |
-| `Dockerfile` | Initial intended baseline: `debian:trixie-slim` with Bash; bare Debian smoke test still unverified. | That image has been built or persistent storage configured. |
+| `Dockerfile` | Debian Trixie final stage; imports Node.js 26 and its bundled npm from the official `node:26-slim` build stage, installs `core`, and installs `nb` from `dep/nb.sh`. The user reports the integrated image builds and can be entered. | Exact installed Node/npm patch versions unless checked in the built image; persistence is not implemented. |
 | `core` | Existing APT **metapackage of public dependencies** from user's package ecosystem. | That it contains private files, or that dependency installation alone provisions identities or services correctly. Inspect dependency closure, scripts and image layers before publication. |
 | `apt.alj.cx` | User's custom signed APT repository/bootstrap infrastructure. | That `curl .../install` fully provisions an OS: it primarily configures package availability. |
 | `kindle.sh` | Partial cold-host provisioning/enrollment and diagnostics in `hosts-of-embers`. | That it can create, deploy, or manage an outpost container. |
@@ -202,6 +202,7 @@ Use temporary credentials/test fixtures only if clearly fake and never publish r
 ### Docker/OCI/Kiri
 
 - Favor a minimal Debian Trixie amd64 image; keep expensive, deterministic, non-secret installs in build layers when justified. Secrets and node-specific setup happen at deployment/provisioning time.
+- To provide Node.js, use a named `FROM node:26-slim AS node` build stage before the final `FROM debian:trixie-slim` stage, then copy `/usr/local/` from the Node stage. The final stage must remain Debian Trixie; npm is supplied with the official Node image. `node:26-slim` tracks the latest Node.js 26 patch release, not the latest major release.
 - Confirm the installed Kiri command syntax and Docker API compatibility with an actual smoke test; do not infer support for a feature because Docker has it.
 - Choose `CMD`/entrypoint, PID 1 behavior, signal handling, interactive shell, daemon/service supervision, capabilities, and network design **based on a tested requirement**. Do not assume systemd runs inside bare `debian:trixie-slim`.
 - Do not add packages simply for future convenience. Do not conflate `docker build`/`kiri build` with creating durable instances.
@@ -288,7 +289,7 @@ Keep `JOURNAL.md` as a concise, factual handoff: project identity, current archi
 
 | Track | Near-term test | Later steps, only after prior test passes |
 |---|---|---|
-| **Image** | Bare Debian Trixie amd64 boots in interactive terminal using Kiri. | Reproducible versioned build; audit/install `core`; minimal packages; service supervision where needed. |
+| **Image** | User reports the integrated Debian Trixie image builds and opens; it includes `core`, `nb`, Node.js 26 and bundled npm. | Verify exact runtime versions in-image; audit image/dependencies; publish image; service supervision where needed. |
 | **State / deployment** | Existing instance can be entered repeatedly; explicit volume retains a test file. | Recreate while preserving enumerated state; multiple isolated instances; Linux bootstrap; eventual supported Windows VM backend. |
 | **Kindle** | Bounded dependency failure and non-disclosing credential check. | Staged cold-OS provisioning, OS identity, enrollment, rerunnable actions; profiles for real Debian/outposts. |
 | **Host Doctor** | Verify existing CLI behavior inside bare Debian without false negatives from site-specific checks. | Node profiles; JSON schema; daemon; durable queue; secure HQ telemetry. |
@@ -296,7 +297,7 @@ Keep `JOURNAL.md` as a concise, factual handoff: project identity, current archi
 | **Identity/network** | Document per-node identity and first-trust requirements without sharing secrets. | `gopass` access/bootstrap, SSH/GPG, individual VPN identity, peers/HQ connectivity. |
 | **Public release** | Audit image, package closure, code and documentation for secret/topology leaks. | Reproducible public image publishing and verified one-command bootstrap per supported platform. |
 
-**Current evidence gate:** The bare-Debian Kiri smoke test was proposed but **no successful output has been supplied**. The earlier test used ephemeral `--rm` intentionally; do **not** infer persistence from it. The next behavior should be selected based on that real test result, not assumed success.
+**Current evidence gate:** The user reports that the integrated image builds and can be entered, with Node.js and npm available. Exact `node -v` / `npm -v` output has not been recorded here. The earlier bare-Debian-only test is superseded by the integrated image. The test used an ephemeral container; do **not** infer persistence from it.
 
 ## 9. Response contract for every engineering turn
 

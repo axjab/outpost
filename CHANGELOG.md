@@ -1,6 +1,9 @@
 
-Version 0.2.0 ...
+Version 0.2.0 not there yet
 
-Version 0.1.0 adds node and npm
+Version 0.1.0
+  - Add Node.js 26 from the official `node:26-slim` image as a multi-stage build source.
+  - Copy Node.js and its bundled npm into the Debian Trixie Outpost image without changing the final base image.
 
-Version 0.0.0 ....
+Version 0.0.0
+  - it works

@@ -1,7 +1,7 @@
 # Project Journal — Outpost
 
-**Updated:** 2026-11-09  
-**Status:** Name committed; image-only scope confirmed; bare Debian Kiri smoke test still unverified.  
+**Updated:** 2026-11-16  
+**Status:** Integrated Debian Trixie image includes `core`, `nb`, Node.js 26 and bundled npm; user reports successful build and interactive entry. Image publication remains pending.  
 **Repository:** `axjab/outpost` (name committed by user)  
 **Description:** Deploy and manage persistent Debian outposts with independent identities, automated provisioning, and fleet health monitoring.  
 **Scope:** Linux-first, amd64, terminal-only, Docker API/Kiri, Debian Trixie; Windows later with no WSL or Distrobox.
@@ -182,3 +182,17 @@ Never claim tests passed without actual results. Keep machine secrets and enroll
 2. Run/confirm the bare Debian Kiri smoke test. Keep Docker Engine intact.
 3. On a pass, implement the smallest persistent named-outpost lifecycle change; later introduce `core` and Kindle only after successful tests.
 4. For each iteration, update this journal with *actual* results and the commit hash, not intended outcomes.
+
+
+## Iteration 2 — Node.js and npm in the image (2026-11-16)
+
+- Added an official Node.js build stage: `FROM node:26-slim AS node`.
+- Kept `debian:trixie-slim` as the final Outpost stage and copied `/usr/local/` from the Node.js stage into it. This supplies Node.js and the npm bundled with the official image without changing Outpost's Debian base or adding a NodeSource APT repository.
+- `node:26-slim` tracks the latest Node.js 26 patch release; it does not automatically move to a newer major line.
+- The current Dockerfile also installs the existing `core` metapackage and `nb` using `dep/nb.sh`.
+- **User-reported result:** the image builds and can be entered; Node.js and npm appear available. Exact `node -v` and `npm -v` output was not supplied in this update, so no exact versions are recorded.
+- Persistence, image publication, and a full public-release audit remain outstanding.
+
+### Current next step
+
+- Review the public image build inputs and package closure, then publish the image as a separate task. Do not claim publication or persistence until verified.
