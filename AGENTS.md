@@ -336,3 +336,11 @@ Do not ask the user to repeat information already supplied, claim a future auton
 - Outpost machine information is configured without prompting: pretty hostname is `Outpost: <current system hostname>`; location is left unset; host tags are `virtual`; default user is `a`. Do not add other machine-information fields or first-time detection unless requested in a later iteration.
 - Kindling-state storage review: a reusable image must not contain a read-only marker that claims an instance is already kindled. If local completion state is needed, use mutable, root-owned state under `/var/lib/outpost/` and persist that path per instance. Treat HQ enrollment/identity as separate evidence; do not infer successful kindling from generic files such as `/etc/machine-info`. Implementation is deferred.
 - Install Debian's `fastfetch` package in the image and invoke it from user `a`'s interactive Bash startup, once per inherited shell session and only when attached to a terminal.
+
+
+## 12. Pull request style and kindling status
+
+- Keep pull request titles and descriptions short, plain, and informal. Use a few concise bullets; avoid formal sections, lengthy context, inflated claims, and project-management language. This applies to every future Outpost pull request unless the user asks otherwise.
+- The login status is computed from the active policy files in `/etc/outpost/kindling.d/*.check`. Every configured policy must pass; an empty, missing, unsafe, failed, or unverifiable policy set is **Unkindled**. Add/remove policy files to change the required set. Policy scripts must be root-owned (or owned by the invoking user for local tests), not group/world writable, and must exit 0 only when their requirement is verified.
+- The status checker is read-only. It does not use a timestamp or marker as proof of kindling. Its exit status is 0 for Kindled and 1 for Unkindled; configuration/usage errors return 2. Login displays the conservative result.
+- The image build passes `OUTPOST_VERSION` into the Dockerfile and stores it at `/etc/outpost/version`; direct Dockerfile builds default to `dev`.
