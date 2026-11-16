@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source /usr/lib/outpost/kindling/common.sh
+
+command -v gpg >/dev/null 2>&1
+fingerprint=$(machine_info_value GPG_FP)
+[[ $fingerprint =~ ^[[:xdigit:]]{40}$ ]]
+gpg --batch --quiet --list-secret-keys "$fingerprint" >/dev/null 2>&1
