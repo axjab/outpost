@@ -7,7 +7,7 @@ verbose=false
 quiet=false
 
 usage() {
-    printf 'Usage: %s [--policy-dir DIR] [--verbose]\n' "${0##*/}" >&2
+    printf 'Usage: %s [--policy-dir DIR] [--verbose] [--quiet]\n' "${0##*/}" >&2
 }
 
 main() {
@@ -39,11 +39,11 @@ main() {
 
     if all_policies_pass; then
         [[ $verbose == false ]] || printf 'All kindling policies passed.\n' >&2
-        printf 'Kindled\n'
+        [[ $quiet == true ]] || printf 'Kindled\n'
         return 0
     fi
 
-    printf 'Unkindled\n'
+    [[ $quiet == true ]] || printf 'Unkindled\n'
     return 1
 }
 
