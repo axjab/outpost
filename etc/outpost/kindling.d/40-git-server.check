@@ -5,5 +5,5 @@ source /usr/lib/outpost-kindling/common.sh
 has_ssh_host git
 command -v timeout >/dev/null 2>&1
 command -v ssh >/dev/null 2>&1
-output=$(timeout 4 ssh -o BatchMode=yes -o ConnectTimeout=3 -T git 2>&1) || :
+output=""\nif output=$(timeout 4 ssh -o BatchMode=yes -o ConnectTimeout=3 -T git 2>&1); then\n    :\nfi
 [[ $output == *"Run with no arguments or with -c cmd"* ]]
