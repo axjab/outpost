@@ -19,7 +19,7 @@ RUN useradd --create-home --user-group --shell /bin/bash a
 RUN set -eu; \
     export DEBIAN_FRONTEND=noninteractive; \
     apt-get update; \
-    apt-get install -y --no-install-recommends ca-certificates curl sudo; \
+    apt-get install -y --no-install-recommends ca-certificates curl fastfetch sudo; \
     printf '%s\n' 'a ALL=(root) NOPASSWD: /usr/bin/apt, /usr/bin/apt-get' \
         > /etc/sudoers.d/outpost-apt; \
     chmod 0440 /etc/sudoers.d/outpost-apt; \
@@ -38,6 +38,14 @@ RUN set -eu; \
     apt-get install -y --no-install-recommends core; \
     /bin/sh /tmp/nb-install.sh; \
     rm -f /tmp/nb-install.sh; \
+    printf '%s\n' \
+        '' \
+        '# Show system information once per interactive terminal session.' \
+        'if [[ $- == *i* && -t 1 && -z ${OUTPOST_FASTFETCH_SHOWN:-} ]] && command -v fastfetch >/dev/null 2>&1; then' \
+        '    export OUTPOST_FASTFETCH_SHOWN=1' \
+        '    fastfetch' \
+        'fi' \
+        >> /home/a/.bashrc; \
     rm -rf /var/lib/apt/lists/*
 
 USER a
