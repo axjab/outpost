@@ -1,11 +1,11 @@
 services:
   outpost:
-    image: ghcr.io/axjab/outpost:0.1.0
+    image: ghcr.io/axjab/outpost:0.2.0
     container_name: outpost
     hostname: outpost
+    # volumes:
+      # - ./home:/home/a
+
     # keep input open
     stdin_open: true
     tty: true
-    #
-    volumes:
-      - ./vol/home:/home/a

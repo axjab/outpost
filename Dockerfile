@@ -16,6 +16,7 @@ COPY dep/nb.sh /tmp/nb-install.sh
 
 RUN useradd --create-home --user-group --shell /bin/bash a
 
+# can this be divided into multiple RUN directives with one comment each?
 RUN set -eu; \
     export DEBIAN_FRONTEND=noninteractive; \
     apt-get update; \
