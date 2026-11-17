@@ -22,7 +22,7 @@ COPY bin/outpost-entrypoint /usr/local/bin/outpost-entrypoint
 
 COPY dep/nb.sh /tmp/nb-install.sh
 
-RUN useradd --create-home --user-group --shell /bin/bash a && find /home/a -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+RUN useradd --create-home --user-group --shell /bin/bash a
 
 # can this be divided into multiple RUN directives with one comment each?
 RUN set -eu; \
@@ -52,6 +52,7 @@ RUN set -eu; \
     chmod 0444 /etc/outpost/version; \
     chmod 0755 /usr/local/bin/outpost-entrypoint; \
     printf '\n# Load Outpost shared interactive defaults.\nif [ -r /etc/profile.d/default_bashrc.sh ]; then\n    . /etc/profile.d/default_bashrc.sh\nfi\n' >> /etc/bash.bashrc; \
+    find /home/a -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +; \
     rm -rf /var/lib/apt/lists/*
 
 USER a
