@@ -12,7 +12,7 @@ Outpost keeps shared shell defaults in the image and user settings in the home d
 - `skel/.bashrc` is the user-owned starting template. It is empty by default; edit it to seed new homes.
 - `default_bash_logout.sh` is copied to `/home/a/.bash_logout`.
 - The image creates an empty `.config` directory in its skeleton.
-- `/etc/outpost/version` contains the build's `OUTPOST_VERSION` and is owned by root with mode 0444.
+- `VERSION` is the single version source in the repository. The image copies it to `/usr/share/outpost/version`, owned by root with mode 0444. It is not a build argument or runtime setting.
 
 The image starts with an empty `/home/a`. On container startup, the entrypoint copies the skeleton into the home only when it contains no entries. It does not merge defaults into a partially populated home and does not overwrite existing user files.
 
@@ -20,28 +20,28 @@ The entrypoint runs as user `a`; therefore an empty bind-mounted home must be wr
 
 ## Version file limitation
 
-Mode 0444 prevents the normal Outpost user from writing the version file. It is not a kernel immutable attribute: root inside a container can change permissions and replace it. The immutable flag is not a portable guarantee on Docker overlay filesystems. The authoritative version remains the value baked into the image at build time.
+The version is fixed by the repository's `VERSION` file. `do/build` reads that file for the image tag; the Dockerfile copies the same file into `/usr/share/outpost/version`. There is no `OUTPOST_VERSION` build argument or environment override. Mode 0444 prevents ordinary writes by user `a`; container root can still replace files in its writable layer.
 
 ## Test checklist
 
 Build:
 
 ```bash
-OUTPOST_VERSION=0.2.0 ./do/build
+./do/build
 ```
 
 Run with a fresh empty home:
 
 ```bash
 home=$(mktemp -d)
-docker run --rm -it -v "$home:/home/a" ghcr.io/axjab/outpost:0.2.0
+docker run --rm -it -v "$home:/home/a" ghcr.io/axjab/outpost:$(cat VERSION)
 ```
 
 Inside the container, check:
 
-- [ ] `cat /etc/outpost/version` prints `0.2.0`.
-- [ ] `stat -c '%U:%G %a' /etc/outpost/version` reports `root:root 444`.
-- [ ] As user `a`, `test ! -w /etc/outpost/version` succeeds.
+- [ ] `cat /usr/share/outpost/version` matches the repository's `VERSION` file.
+- [ ] `stat -c '%U:%G %a' /usr/share/outpost/version` reports `root:root 444`.
+- [ ] As user `a`, `test ! -w /usr/share/outpost/version` succeeds.
 - [ ] `/home/a/.bashrc` exists and is empty.
 - [ ] `/home/a/.bash_logout` exists.
 - [ ] `/home/a/.config` exists and is empty.
