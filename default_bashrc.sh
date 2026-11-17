@@ -2,6 +2,9 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+# This file is sourced by Bash startup files and by /etc/profile for login shells.
+[ -n "${BASH_VERSION:-}" ] || return
+
 # Debian may source this file through both /etc/bash.bashrc and /etc/profile.d.
 # Avoid running the defaults twice in the same shell, but allow child shells to load them.
 if [[ -n ${OUTPOST_DEFAULT_BASHRC_LOADED:-} ]]; then
