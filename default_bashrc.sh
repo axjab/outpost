@@ -1,6 +1,5 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
+# Shared interactive Bash defaults for Outpost.
+# Loaded by /etc/profile.d for login shells and /etc/bash.bashrc otherwise.
 
 # This file is sourced by Bash startup files and by /etc/profile for login shells.
 [ -n "${BASH_VERSION:-}" ] || return
