@@ -3,10 +3,14 @@
 set -euo pipefail
 
 readonly IMAGE="ghcr.io/axjab/outpost"
+readonly ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+readonly VERSION_FILE="${ROOT}/VERSION"
 
 main() {
     check_version
     check_dependencies
+
+    OUTPOST_VERSION="$(<"${VERSION_FILE}")"
     check_local_images
 
     echo "Pushing ${IMAGE}:${OUTPOST_VERSION}"
@@ -19,14 +23,16 @@ main() {
 }
 
 check_version() {
-    if [[ -z "${OUTPOST_VERSION:-}" ]]; then
-        echo "ERROR: OUTPOST_VERSION is not set" >&2
-        echo "Usage: OUTPOST_VERSION=0.1.0 ./do/push" >&2
+    if [[ ! -f "${VERSION_FILE}" || ! -r "${VERSION_FILE}" ]]; then
+        echo "ERROR: VERSION file is missing or unreadable: ${VERSION_FILE}" >&2
         exit 1
     fi
 
-    if [[ ! "${OUTPOST_VERSION}" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ || "${OUTPOST_VERSION}" == "latest" ]]; then
-        echo "ERROR: Invalid OUTPOST_VERSION: ${OUTPOST_VERSION}" >&2
+    local version
+    version="$(<"${VERSION_FILE}")"
+
+    if [[ ! "${version}" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ || "${version}" == "latest" ]]; then
+        echo "ERROR: Invalid version in VERSION: ${version}" >&2
         exit 1
     fi
 }
@@ -46,7 +52,7 @@ check_local_images() {
     for tag in "${OUTPOST_VERSION}" latest; do
         if ! docker image inspect "${IMAGE}:${tag}" >/dev/null 2>&1; then
             echo "ERROR: Local image not found: ${IMAGE}:${tag}" >&2
-            echo "Run OUTPOST_VERSION=${OUTPOST_VERSION} ./do/build first." >&2
+            echo "Run ./do/build first." >&2
             exit 1
         fi
     done
