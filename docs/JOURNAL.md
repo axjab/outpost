@@ -10,11 +10,11 @@
 
 - A **site** is the outer computer. An **outpost** is one independent Debian OS instance installed at that site. A site can host many outposts; each has its own hostname, identity, state, connectivity, and Host Doctor reporting to HQ.
 - Outposts share the Linux kernel of the runtime/VM; they are independent **managed nodes**, not necessarily independent kernel environments.
-- There are **two distinct workflows**: (1) host-side deployment/installation of an outpost; (2) `kindle.sh` provisioning/enrollment **of a cold OS**. The latter must also work on a real Debian server, without a container.
+- There are **two distinct workflows**: (1) host-side deployment/installation of an outpost; (2) `the separate cold-host provisioning workflow` provisioning/enrollment **of a cold OS**. The latter must also work on a real Debian server, without a container.
 - `hostdr` is a separate existing CLI; **its daemon does not exist yet**. Each physical host or outpost running Host Doctor has an independent health record.
 - `hosts-of-embers` is the desired single inventory/enrollment source of truth. Ansible may replace the old Hostfile's configuration operations, but should not create another authoritative inventory.
 - Public Git repository and public OCI image are committed targets. `core` is a metapackage of public dependencies; audit image layers and provisioning output for inadvertent secrets before release. `gopass` holds secrets; no secrets/unique identities/private inventory in sources or image layers.
-- Existing scripts retain their independent names (`kindle.sh`, `hostdr`, `core`). Full terminology is in `docs/NOMENCLATURE.md`.
+- Existing scripts retain their independent names (`the separate cold-host provisioning workflow`, `hostdr`, `core`). Full terminology is in `docs/NOMENCLATURE.md`.
 
 ## Architecture
 
@@ -38,14 +38,14 @@
          Future physical Debian server
             `- kindle -> provision -> hostdr -> HQ
 
-outpost deployment != kindle.sh != hostdr/Host Doctor daemon
+outpost deployment != the separate cold-host provisioning workflow != hostdr/Host Doctor daemon
 ```
 
 The site's kernel/runtime capabilities constrain an outpost's ability to run systemd, network management, firewalls, Tailscale or other OS services. The outpost does **not** implicitly mount host-root, use the Docker socket, execute `nsenter`, or inspect/control the site. Any later cross-site administration feature needs a separate explicit decision.
 
 ## Existing components examined
 
-### Cold host: `kindle.sh` (`hosts-of-embers`)
+### Cold host: `the separate cold-host provisioning workflow` (`hosts-of-embers`)
 
 - Source: user attachment `Pasted text(20261109-203529).txt`; partly implemented.
 - Main flow: install dependencies -> record initialization -> set architecture -> run diagnostic checks. Intended end-to-end flow: Connect -> Dependencies -> Identity -> Enrollment -> Provisioning -> Inspection.
@@ -53,7 +53,7 @@ The site's kernel/runtime capabilities constrain an outpost's ability to run sys
 - Uses `hostnamectl` JSON and `/etc/machine-info`; records initialization timestamp before verification is complete.
 - Checks hostname, location, tags, user, GPG, SSH, Tailscale, GitHub, Git server, configuration, credentials and vault.
 - Secret exposure: `gopass gitlab/token` used as a success test may print plaintext secret. Replace with non-disclosing verification before running automatically.
-- `kindle.sh` remains **in its own project** and is not renamed to fit Outpost.
+- `the separate cold-host provisioning workflow` remains **in its own project** and is not renamed to fit Outpost.
 
 ### Health: `hostdr` (`host-doctor`)
 
@@ -95,7 +95,7 @@ The site's kernel/runtime capabilities constrain an outpost's ability to run sys
 |---|---|---|
 | **Debian image** | Reproducible, disposable Debian filesystem, installed dependencies, audited `core` | Unique host identity, gopass secrets, vault content, VPN state |
 | **Outpost deployment/bootstrap (future, separate from image)** | Acquire image, allocate per-instance data, create/start/stop/enter/recreate, backend integration | Cold-OS enrollment; automatic inspection of outer site |
-| **`kindle.sh`** | Cold Debian provisioning, initial node identity/trust, enrollment, diagnostics | Creating outposts or managing Docker/Kiri |
+| **`the separate cold-host provisioning workflow`** | Cold Debian provisioning, initial node identity/trust, enrollment, diagnostics | Creating outposts or managing Docker/Kiri |
 | **Host Doctor CLI** | Inspect and report the current OS | Inspect a parent site from inside its outpost |
 | **Host Doctor daemon** | Schedule health checks, persist failures, forward node telemetry to HQ | Provision hosts or create container instances |
 | **Ansible** | Declarative idempotent configuration/templating for real and virtual Debian | Maintaining a competing authoritative inventory |
@@ -133,7 +133,7 @@ Never claim tests passed without actual results. Keep machine secrets and enroll
 | D-002 | Linux first, Windows later; no Distrobox or WSL | Accepted |
 | D-003 | No secret/host identity in Git, OCI image layers or build logs | Accepted |
 | D-004 | Separate persistent state and replaceable image | Accepted concept; exact mounts undecided |
-| D-005 | Outpost deployment and `kindle.sh` cold-OS provisioning are distinct | Accepted |
+| D-005 | Outpost deployment and `the separate cold-host provisioning workflow` cold-OS provisioning are distinct | Accepted |
 | D-006 | One Doctor per OS/node; outpost != site | Accepted |
 | D-007 | Baseline doesn't administer/inspect outer site from within outpost | Accepted |
 | D-008 | Public repo and public image, contingent on audit | Accepted target; NOT released |
@@ -147,16 +147,16 @@ Never claim tests passed without actual results. Keep machine secrets and enroll
 
 ### Iteration 0 — Source discovery (2026-11-09)
 
-- Received `kindle.sh`, `hostdr`, and Hostfile; `core` package is described but not yet examined.
+- Received `the separate cold-host provisioning workflow`, `hostdr`, and Hostfile; `core` package is described but not yet examined.
 - Corrected the scope so deployment, cold-OS kindling, and per-OS health reporting remain separate.
-- Identified `kindle.sh` restart-loop/secret-output hazards; daemon currently absent.
+- Identified `the separate cold-host provisioning workflow` restart-loop/secret-output hazards; daemon currently absent.
 
 ### Iteration 0b — Naming and release design (2026-11-09)
 
 - User rejected `consulate`, accepted `outpost` with military-oriented terminology.
 - Existing projects use `outpost` CLIs for remote container tooling; accepted as a namespace collision risk, not a reason to rename again.
 - Planned public source/public image with mandatory checks; not yet published.
-- Only documentation changes in this iteration: `PROJECT-JOURNAL.md` and `docs/NOMENCLATURE.md`.
+- Only documentation changes in this iteration: `PROJECT-docs/JOURNAL.md` and `docs/NOMENCLATURE.md`.
 
 ### Iteration 1 — Bare Debian image (prepared, NOT verified)
 
