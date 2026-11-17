@@ -55,3 +55,11 @@ No big-bang implementation. No claiming success before tests. No new Outpost CLI
 ## Agent handoff
 
 For the full operating contract, read [../AGENTS.md](../AGENTS.md); for actual progress and commits, read `../JOURNAL.md`. The **latest user request and real test output** override stale documentation.
+
+## Home and shell defaults
+
+- Shared Bash defaults live in `/etc/profile.d/default_bashrc.sh` and are loaded for login and interactive non-login shells.
+- User settings live in `/home/a/.bashrc`; the starting template is `skel/.bashrc`, empty by default.
+- An entrypoint copies `.bashrc`, `.bash_logout`, and an empty `.config` into a completely empty home only. Existing homes are left alone.
+- The repository `VERSION` file is the only version source. It is copied to `/usr/share/outpost/version` as root-owned mode 0444; the build script uses it for image tags.
+- See [HOME-SHELL.md](HOME-SHELL.md) for details and the test checklist.

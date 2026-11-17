@@ -1,12 +1,22 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
+# Shared interactive Bash defaults for Outpost.
+# Loaded by /etc/profile.d for login shells and /etc/bash.bashrc otherwise.
+
+# This file is sourced by Bash startup files and by /etc/profile for login shells.
+[ -n "${BASH_VERSION:-}" ] || return
+
+# Debian may source this file through both /etc/bash.bashrc and /etc/profile.d.
+# Avoid running the defaults twice in the same shell, but allow child shells to load them.
+if [[ -n ${OUTPOST_DEFAULT_BASHRC_LOADED:-} ]]; then
+    return
+fi
 
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
       *) return;;
 esac
+
+OUTPOST_DEFAULT_BASHRC_LOADED=1
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options

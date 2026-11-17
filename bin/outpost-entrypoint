@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+: "${HOME:=/home/a}"
+readonly SKEL_DIR="${OUTPOST_SKEL_DIR:-/etc/outpost/skel}"
+
+if [[ ! -d "$HOME" ]]; then
+    printf 'Outpost: home directory does not exist: %s\n' "$HOME" >&2
+    exit 1
+fi
+
+if [[ -z "$(find "$HOME" -mindepth 1 -maxdepth 1 -print -quit)" ]]; then
+    if ! cp -R "$SKEL_DIR/." "$HOME/"; then
+        printf 'Outpost: could not initialize empty home directory: %s\n' "$HOME" >&2
+        exit 1
+    fi
+fi
+
+exec "$@"
