@@ -1,5 +1,7 @@
 # Outpost
 
+> Short on time? Read the [plain-English TL;DR](TLDR.md).
+
 Outpost gives you a personal Debian 13 environment running inside a Docker container.
 
 It lets you bring your own Debian userspace to a machine without installing Debian on the host operating system. Even on a Windows machine, Docker provides the runtime needed to launch your own Outpost.
