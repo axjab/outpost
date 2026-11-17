@@ -11,7 +11,7 @@ main() {
     check_dependencies
 
     local outpost_version
-    IFS= read -r outpost_version < "${VERSION_FILE}"
+    outpost_version="$(<"${VERSION_FILE}")"
 
     echo "Building ${IMAGE}:latest and ${IMAGE}:${outpost_version}"
 
@@ -28,7 +28,7 @@ check_version() {
     fi
 
     local version
-    IFS= read -r version < "${VERSION_FILE}"
+    version="$(<"${VERSION_FILE}")"
 
     if [[ ! "${version}" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ || "${version}" == "latest" ]]; then
         echo "ERROR: Invalid version in VERSION: ${version}" >&2
