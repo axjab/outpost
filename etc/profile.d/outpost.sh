@@ -5,15 +5,15 @@ case $- in
 esac
 
 [ -t 1 ] || return
-[ -z "${OUTPOST_LOGIN_SHOWN:-}" ] || return
+if [ -n "$OUTPOST_LOGIN_SHOWN" ]; then return; fi
 
 export OUTPOST_LOGIN_SHOWN=1
 
 fastfetch
-printf 'Outpost version: %s\\n' "$(cat /usr/share/outpost/version)"
+printf 'Outpost version: %s\n' "$(cat /usr/share/outpost/version)"
 
 if /usr/local/bin/outpost-kindling-status --quiet; then
-    printf 'Kindling: Kindled\\n'
+    printf 'Kindling: Kindled\n'
 else
-    printf 'Kindling: Unkindled\\n'
+    printf 'Kindling: Unkindled\n'
 fi
