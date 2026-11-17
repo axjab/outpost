@@ -11,7 +11,7 @@ if [[ ! -d "$HOME" ]]; then
 fi
 
 if [[ -z "$(find "$HOME" -mindepth 1 -maxdepth 1 -print -quit)" ]]; then
-    if ! cp -a "$SKEL_DIR/." "$HOME/"; then
+    if ! cp -R "$SKEL_DIR/." "$HOME/"; then
         printf 'Outpost: could not initialize empty home directory: %s\n' "$HOME" >&2
         exit 1
     fi
