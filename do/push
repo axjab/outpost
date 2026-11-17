@@ -10,11 +10,11 @@ main() {
     check_version
     check_dependencies
 
-    OUTPOST_VERSION="$(<"${VERSION_FILE}")"
+    IMAGE_VERSION="$(<"${VERSION_FILE}")"
     check_local_images
 
-    echo "Pushing ${IMAGE}:${OUTPOST_VERSION}"
-    docker push "${IMAGE}:${OUTPOST_VERSION}"
+    echo "Pushing ${IMAGE}:${IMAGE_VERSION}"
+    docker push "${IMAGE}:${IMAGE_VERSION}"
 
     echo "Pushing ${IMAGE}:latest"
     docker push "${IMAGE}:latest"
@@ -49,7 +49,7 @@ check_dependencies() {
 
 check_local_images() {
     local tag
-    for tag in "${OUTPOST_VERSION}" latest; do
+    for tag in "${IMAGE_VERSION}" latest; do
         if ! docker image inspect "${IMAGE}:${tag}" >/dev/null 2>&1; then
             echo "ERROR: Local image not found: ${IMAGE}:${tag}" >&2
             echo "Run ./do/build first." >&2
