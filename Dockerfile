@@ -22,7 +22,7 @@ COPY bin/outpost-entrypoint /usr/local/bin/outpost-entrypoint
 
 COPY dep/nb.sh /tmp/nb-install.sh
 
-RUN useradd --create-home --user-group --shell /bin/bash a
+RUN useradd --create-home --user-group --shell /bin/bash a; \\\n    find /home/a -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
 
 # can this be divided into multiple RUN directives with one comment each?
 RUN set -eu; \
