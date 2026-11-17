@@ -76,16 +76,16 @@ outpost/
 ├── docs/
 │   ├── bash-engineering-SKILL.md
 │   └── NOMENCLATURE.md
-├── JOURNAL.md
+├── docs/JOURNAL.md
 └── NOMENCLATURE.md
 ```
 
-This `AGENTS.md` and `docs/PROJECT-TLDR.md` are proposed additions. The tree above is a snapshot, not an instruction to remove future files.
+This `docs/AGENTS.md` and `TLDR.md` are proposed additions. The tree above is a snapshot, not an instruction to remove future files.
 
 **Before changing code, read:**
 
 1. The current user request and actual files relevant to it.
-2. `JOURNAL.md` for verified progress, prior test output, design decisions, and outstanding questions.
+2. `docs/JOURNAL.md` for verified progress, prior test output, design decisions, and outstanding questions.
 3. `docs/bash-engineering-SKILL.md` before editing Bash. Respect its concrete engineering rules; **do not guess its contents** if it is unavailable.
 4. `docs/NOMENCLATURE.md` and root `NOMENCLATURE.md` before introducing names. Two copies exist: **check for drift**; do not silently declare one canonical or overwrite the other without verifying their roles.
 5. `Dockerfile` and any existing Docker/Kiri build files before editing the image.
@@ -220,7 +220,7 @@ Use temporary credentials/test fixtures only if clearly fake and never publish r
 ### A — Request and inspect
 
 - Identify the user-selected next behavior, or the earliest unverified milestone when asked to continue.
-- Read relevant files (including Bash skill), recent `JOURNAL.md` entries, and previous actual test output.
+- Read relevant files (including Bash skill), recent `docs/JOURNAL.md` entries, and previous actual test output.
 - State the baseline: **verified / unverified / unknown**. Do not treat earlier assistant claims as machine test results.
 - Locate the correct repository and ownership boundary before editing.
 
@@ -277,13 +277,13 @@ The user **applies the ZIP, rebuilds, tests on their machine, and commits**. Pro
 
 When test output arrives:
 
-- Pass → record exact tests and commit (when supplied) in `JOURNAL.md`; select the next smallest change.
+- Pass → record exact tests and commit (when supplied) in `docs/JOURNAL.md`; select the next smallest change.
 - Fail → diagnose, revise only the same patch/change, rerun checks, issue a new ZIP; do **not** increment to another feature.
 - Blocked → document the missing prerequisite and a reproducible unblock test, without pretending the milestone passed.
 
 ### G — Maintain context across sessions
 
-Keep `JOURNAL.md` as a concise, factual handoff: project identity, current architecture decisions, verified vs pending milestones, test evidence, known bugs, next atomic change, touched paths, and Git commit hashes **only when actually known**. Update it in a patch when relevant. Avoid turning untested plans into completed work.
+Keep `docs/JOURNAL.md` as a concise, factual handoff: project identity, current architecture decisions, verified vs pending milestones, test evidence, known bugs, next atomic change, touched paths, and Git commit hashes **only when actually known**. Update it in a patch when relevant. Avoid turning untested plans into completed work.
 
 ## 8. Roadmap — order by verification, not ambition
 
@@ -326,7 +326,7 @@ Do not ask the user to repeat information already supplied, claim a future auton
 7. **Outer host administration is no longer in baseline scope.** Do not revive writable host-root or privilege-bridge design without a new explicit request.
 8. **Kiri + installed Docker Engine** are the Linux-first toolchain; verify Kiri's commands experimentally. Windows without WSL remains a later backend problem, not a solved feature.
 9. **One atomic ZIP patch → user build/test → user commit → repeat.** No sweeping implementation, no invented test success.
-10. **Project tree uses `JOURNAL.md`**, not the older handoff filename `PROJECT-JOURNAL.md`; preserve what exists rather than silently renaming files.
+10. **Project tree uses `docs/JOURNAL.md`**, not the older handoff filename `PROJECT-docs/JOURNAL.md`; preserve what exists rather than silently renaming files.
 
 **When repository evidence conflicts with this document:** prioritize the user's *latest explicit instruction*, then the *actual inspected code and tests*, then maintained project decisions. Surface unresolved conflicts rather than blending incompatible versions. This document is a working contract and must be updated when the user changes an architectural decision.
 
