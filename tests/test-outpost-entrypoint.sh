@@ -14,7 +14,7 @@ readonly EXISTING_HOME="${TMP}/existing-home"
 mkdir -p "${SKEL}/.config" "${EMPTY_HOME}" "${EXISTING_HOME}"
 : > "${SKEL}/.bashrc"
 cp "${ROOT}/default_bash_logout.sh" "${SKEL}/.bash_logout"
-printf 'keep me\\n' > "${EXISTING_HOME}/sentinel"
+printf 'keep me\n' > "${EXISTING_HOME}/sentinel"
 
 HOME="${EMPTY_HOME}" OUTPOST_SKEL_DIR="${SKEL}" "${ENTRYPOINT}" /bin/true
 
@@ -31,4 +31,4 @@ HOME="${EXISTING_HOME}" OUTPOST_SKEL_DIR="${SKEL}" "${ENTRYPOINT}" /bin/true
 [[ ! -e "${EXISTING_HOME}/.bash_logout" ]]
 [[ ! -e "${EXISTING_HOME}/.config" ]]
 
-printf 'PASS: empty home initialized; existing home left untouched.\\n'
+printf 'PASS: empty home initialized; existing home left untouched.\n'
