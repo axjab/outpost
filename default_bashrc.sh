@@ -2,6 +2,12 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+# Debian may source this file through both /etc/bash.bashrc and /etc/profile.d.
+# Avoid running the defaults twice in the same shell, but allow child shells to load them.
+if [[ -n ${OUTPOST_DEFAULT_BASHRC_LOADED:-} ]]; then
+    return
+fi
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
