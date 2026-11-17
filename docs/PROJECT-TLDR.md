@@ -56,14 +56,10 @@ No big-bang implementation. No claiming success before tests. No new Outpost CLI
 
 For the full operating contract, read [../AGENTS.md](../AGENTS.md); for actual progress and commits, read `../JOURNAL.md`. The **latest user request and real test output** override stale documentation.
 
+## Home and shell defaults
 
-## Latest decisions — 2026-11-16
-
-- Machine information is not collected interactively: pretty hostname `Outpost: <system hostname>`, no location, tag `virtual`, default user `a`. First-time-install detection is deferred.
-- A reusable image must not contain a read-only marker claiming that every instance is already kindled. If implemented later, local completion state belongs under per-instance persistent `/var/lib/outpost/`; HQ enrollment and local completion state remain distinct. No state mechanism is implemented yet.
-- Fastfetch comes from the existing `core` metapackage and runs from `/etc/profile.d/outpost.sh` in interactive login shells. The hook is image-owned and does not depend on `/home/a`, which may be mounted. The default container command starts Bash as a login shell so the hook is loaded.
-
-
-## Login status
-
-Interactive login shells show Fastfetch, the baked Outpost version, and whether every configured kindling policy passes. The hook lives in `/etc/profile.d/outpost.sh`, not in the mountable home directory. Policies live in `/etc/outpost/kindling.d/*.check`; adding or removing a check changes the required policy set. No configured policies or any failed/unverifiable check means Unkindled. Fastfetch comes from `core`, not a separate package install.
+- Shared Bash defaults live in `/etc/profile.d/default_bashrc.sh` and are loaded for login and interactive non-login shells.
+- User settings live in `/home/a/.bashrc`; the starting template is `skel/.bashrc`, empty by default.
+- An entrypoint copies `.bashrc`, `.bash_logout`, and an empty `.config` into a completely empty home only. Existing homes are left alone.
+- The repository `VERSION` file is the only version source. It is copied to `/usr/share/outpost/version` as root-owned mode 0444; the build script uses it for image tags.
+- See [HOME-SHELL.md](HOME-SHELL.md) for details and the test checklist.

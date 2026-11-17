@@ -13,6 +13,14 @@ ENV VISUAL=hx
 
 # Import Node.js and npm from official image
 COPY --from=node /usr/local/ /usr/local/
+COPY VERSION /usr/share/outpost/version
+
+# Shell defaults and files used to initialize an empty home volume
+COPY default_bashrc.sh /etc/profile.d/default_bashrc.sh
+COPY default_bash_logout.sh /etc/outpost/skel/.bash_logout
+COPY skel/.bashrc /etc/outpost/skel/.bashrc
+COPY etc/profile.d/outpost-profile.sh /etc/profile.d/outpost-profile.sh
+COPY bin/outpost-entrypoint /usr/local/bin/outpost-entrypoint
 
 COPY dep/nb.sh /tmp/nb-install.sh
 COPY bin/outpost-kindling-status /tmp/outpost-kindling-status
@@ -30,6 +38,7 @@ RUN set -eu; \
     printf '%s\n' "$OUTPOST_VERSION" > /etc/outpost/version; \
     rm -rf /tmp/outpost-kindling-status /tmp/outpost-kindling-common.sh /tmp/kindling.d /tmp/outpost-login.sh
 
+# can this be divided into multiple RUN directives with one comment each?
 RUN set -eu; \
     export DEBIAN_FRONTEND=noninteractive; \
     apt-get update; \
@@ -52,9 +61,15 @@ RUN set -eu; \
     apt-get install -y --no-install-recommends core; \
     /bin/sh /tmp/nb-install.sh; \
     rm -f /tmp/nb-install.sh; \
+    mkdir -p /etc/outpost/skel/.config; \
+    chmod 0444 /usr/share/outpost/version; \
+    chmod 0755 /usr/local/bin/outpost-entrypoint; \
+    printf '\n# Load Outpost shared interactive defaults.\nif [ -r /etc/profile.d/default_bashrc.sh ]; then\n    . /etc/profile.d/default_bashrc.sh\nfi\n' >> /etc/bash.bashrc; \
+    find /home/a -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +; \
     rm -rf /var/lib/apt/lists/*
 
 USER a
 WORKDIR /home/a
 
+ENTRYPOINT ["/usr/local/bin/outpost-entrypoint"]
 CMD ["/bin/bash", "--login"]

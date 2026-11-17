@@ -41,17 +41,17 @@ sudo apt upgrade
 Build a versioned image:
 
 ```bash
-OUTPOST_VERSION=0.0.0 ./do/build
+./do/build
 ```
 
 Authenticate with GitHub Container Registry, then publish:
 
 ```bash
 echo "$GHCR_TOKEN" | sudo docker login ghcr.io -u axjab --password-stdin
-OUTPOST_VERSION=0.0.0 ./do/push
+./do/push
 ```
 
-The image is published as:
+The version is read from the repository's `VERSION` file. Update that file to change the release version. The image is published as:
 
 ```text
 ghcr.io/axjab/outpost:latest
