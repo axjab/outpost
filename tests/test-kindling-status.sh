@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-readonly SCRIPT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)/bin/outpost-kindling-status"
+readonly SCRIPT="$(cd -- "$(dirname -- "$BASH_SOURCE")/.." && pwd)/rootfs/usr/local/bin/outpost-kindling-status"
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 

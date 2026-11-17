@@ -10,32 +10,16 @@ ENV VISUAL=hx
 
 # Import Node.js and npm from official image
 COPY --from=node /usr/local/ /usr/local/
+COPY rootfs/ /
 COPY VERSION /usr/share/outpost/version
-
-# Shell defaults and files used to initialize an empty home volume
-COPY default_bashrc.sh /etc/profile.d/default_bashrc.sh
-COPY default_bash_logout.sh /etc/outpost/skel/.bash_logout
-COPY skel/.bashrc /etc/outpost/skel/.bashrc
-COPY etc/profile.d/outpost-profile.sh /etc/profile.d/outpost-profile.sh
-COPY bin/outpost-entrypoint /usr/local/bin/outpost-entrypoint
-
-COPY dep/nb.sh /tmp/nb-install.sh
-COPY bin/outpost-kindling-status /tmp/outpost-kindling-status
-COPY lib/outpost-kindling/common.sh /tmp/outpost-kindling-common.sh
-COPY etc/outpost/kindling.d/ /tmp/kindling.d/
-COPY etc/profile.d/outpost.sh /tmp/outpost-login.sh
 
 RUN set -eu; \
     useradd --create-home --user-group --shell /bin/bash a; \
-    install -D -m 0755 /tmp/outpost-kindling-status /usr/local/bin/outpost-kindling-status; \
-    install -D -m 0644 /tmp/outpost-kindling-common.sh /usr/lib/outpost-kindling/common.sh; \
-    install -d -m 0755 /etc/outpost/kindling.d; \
-    install -m 0644 /tmp/kindling.d/*.check /etc/outpost/kindling.d/; \
-    install -D -m 0644 /tmp/outpost-login.sh /etc/profile.d/outpost.sh; \
-    chmod 0444 /usr/share/outpost/version; \
-    rm -rf /tmp/outpost-kindling-status /tmp/outpost-kindling-common.sh /tmp/kindling.d /tmp/outpost-login.sh
+    chmod 0755 /usr/local/bin/outpost-entrypoint /usr/local/bin/outpost-kindling-status; \
+    install -d -m 0755 /etc/outpost/skel/.config; \
+    chmod 0444 /usr/share/outpost/version
 
-# can this be divided into multiple RUN directives with one comment each?
+# Install system packages and Outpost dependencies.
 RUN set -eu; \
     export DEBIAN_FRONTEND=noninteractive; \
     apt-get update; \
@@ -58,10 +42,6 @@ RUN set -eu; \
     apt-get install -y --no-install-recommends core; \
     /bin/sh /tmp/nb-install.sh; \
     rm -f /tmp/nb-install.sh; \
-    mkdir -p /etc/outpost/skel/.config; \
-    chmod 0755 /usr/local/bin/outpost-entrypoint; \
-    printf '\n# Load Outpost shared interactive defaults.\nif [ -r /etc/profile.d/default_bashrc.sh ]; then\n    . /etc/profile.d/default_bashrc.sh\nfi\n' >> /etc/bash.bashrc; \
-    find /home/a -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +; \
     rm -rf /var/lib/apt/lists/*
 
 USER a
