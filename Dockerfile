@@ -5,13 +5,12 @@ FROM node:26-slim AS node
 # Operating system
 FROM debian:trixie-slim
 
-ARG OUTPOST_VERSION=dev
-
 ENV EDITOR=hx
 ENV VISUAL=hx
 
 # Import Node.js and npm from official image
 COPY --from=node /usr/local/ /usr/local/
+COPY VERSION /usr/share/outpost/version
 
 # Shell defaults and files used to initialize an empty home volume
 COPY default_bashrc.sh /etc/profile.d/default_bashrc.sh
@@ -48,8 +47,7 @@ RUN set -eu; \
     /bin/sh /tmp/nb-install.sh; \
     rm -f /tmp/nb-install.sh; \
     mkdir -p /etc/outpost/skel/.config; \
-    printf '%s\n' "$OUTPOST_VERSION" > /etc/outpost/version; \
-    chmod 0444 /etc/outpost/version; \
+    chmod 0444 /usr/share/outpost/version; \
     chmod 0755 /usr/local/bin/outpost-entrypoint; \
     printf '\n# Load Outpost shared interactive defaults.\nif [ -r /etc/profile.d/default_bashrc.sh ]; then\n    . /etc/profile.d/default_bashrc.sh\nfi\n' >> /etc/bash.bashrc; \
     find /home/a -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +; \
