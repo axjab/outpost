@@ -16,7 +16,7 @@ mkdir -p "${SKEL}/.config" "${EMPTY_HOME}" "${EXISTING_HOME}"
 cp "${ROOT}/default_bash_logout.sh" "${SKEL}/.bash_logout"
 printf 'keep me\n' > "${EXISTING_HOME}/sentinel"
 
-HOME="${EMPTY_HOME}" OUTPOST_SKEL_DIR="${SKEL}" "${ENTRYPOINT}" /bin/true
+HOME="${EMPTY_HOME}" OUTPOST_SKEL_DIR="${SKEL}" bash "${ENTRYPOINT}" /bin/true
 
 [[ -f "${EMPTY_HOME}/.bashrc" ]]
 [[ ! -s "${EMPTY_HOME}/.bashrc" ]]
@@ -24,7 +24,7 @@ HOME="${EMPTY_HOME}" OUTPOST_SKEL_DIR="${SKEL}" "${ENTRYPOINT}" /bin/true
 [[ -d "${EMPTY_HOME}/.config" ]]
 [[ -z "$(find "${EMPTY_HOME}/.config" -mindepth 1 -print -quit)" ]]
 
-HOME="${EXISTING_HOME}" OUTPOST_SKEL_DIR="${SKEL}" "${ENTRYPOINT}" /bin/true
+HOME="${EXISTING_HOME}" OUTPOST_SKEL_DIR="${SKEL}" bash "${ENTRYPOINT}" /bin/true
 
 [[ -f "${EXISTING_HOME}/sentinel" ]]
 [[ ! -e "${EXISTING_HOME}/.bashrc" ]]
