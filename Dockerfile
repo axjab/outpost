@@ -7,6 +7,7 @@ FROM debian:trixie-slim
 
 ENV EDITOR=hx
 ENV VISUAL=hx
+ENV SUDO_EDITOR=hx
 
 # Import Node.js and npm from official image
 COPY --from=node /usr/local/ /usr/local/
@@ -43,6 +44,9 @@ RUN set -eu; \
     printf '%s\n' 'a ALL=(root) NOPASSWD: /usr/bin/apt, /usr/bin/apt-get' \
         > /etc/sudoers.d/outpost-apt; \
     chmod 0440 /etc/sudoers.d/outpost-apt; \
+    printf '%s\n' 'a ALL=(root) NOPASSWD: sudoedit' \
+        > /etc/sudoers.d/outpost-edit; \
+    chmod 0440 /etc/sudoers.d/outpost-edit; \
     installer=$(mktemp); \
     curl -q --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
         --connect-timeout 10 --max-time 60 \
