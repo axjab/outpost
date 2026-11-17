@@ -5,7 +5,7 @@ case $- in
 esac
 
 [ -t 1 ] || return
-if [ -n "$OUTPOST_SHELL_INFO_SHOWN" ]; then return; fi
+if [[ -v OUTPOST_SHELL_INFO_SHOWN ]]; then return; fi
 
 export OUTPOST_SHELL_INFO_SHOWN=1
 
