@@ -7,3 +7,5 @@ Version 0.1.0
 
 Version 0.0.0
   - it works
+
+Version 0.2.0 (unreleased)\n  - Keep shared Bash defaults in the image and user settings in the home directory.\n  - Initialize an empty home with an empty user `.bashrc`, `.bash_logout`, and `.config`.\n  - Bake the Outpost version into a root-owned, read-only file.\n\n
