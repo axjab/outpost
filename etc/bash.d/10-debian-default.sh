@@ -1,11 +1,10 @@
 # Shared interactive Bash defaults for Outpost.
-# Loaded by /etc/profile.d for login shells and /etc/bash.bashrc otherwise.
+# Loaded from /etc/bash.bashrc through /etc/bash.d/.
 
-# This file is sourced by Bash startup files and by /etc/profile for login shells.
+# /etc/bash.bashrc loads this file for interactive Bash shells.
 [ -n "${BASH_VERSION:-}" ] || return
 
-# Debian may source this file through both /etc/bash.bashrc and /etc/profile.d.
-# Avoid running the defaults twice in the same shell, but allow child shells to load them.
+# Avoid applying defaults twice if the loader is sourced more than once.
 if [[ -n ${OUTPOST_DEFAULT_BASHRC_LOADED:-} ]]; then
     return
 fi
