@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source /usr/lib/outpost/kindling/common.sh
+
+host=$(hostname -s 2>/dev/null || hostname)
+private_key="$HOME/.ssh/$host.key"
+public_key="$private_key.pub"
+[[ -r $private_key && -f $private_key && -r $public_key && -f $public_key ]]
+registered_key=$(machine_info_value SSH_KEY)
+[[ -n $registered_key ]]
+[[ $(<"$public_key") == "$registered_key" ]]

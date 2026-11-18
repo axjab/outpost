@@ -16,6 +16,7 @@ main() {
     echo "Building ${IMAGE}:latest and ${IMAGE}:${outpost_version}"
 
     docker build \
+        --label "org.opencontainers.image.version=${outpost_version}" \
         -t "${IMAGE}:latest" \
         -t "${IMAGE}:${outpost_version}" \
         "${ROOT}"

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+command -v timeout >/dev/null 2>&1
+command -v gopass >/dev/null 2>&1
+[[ -d /data/vault ]]
+timeout 5 env PASSWORD_STORE_DIR=/data/vault gopass gitlab/token >/dev/null 2>&1

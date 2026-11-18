@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+command -v ssh >/dev/null 2>&1
+command -v timeout >/dev/null 2>&1
+status=0
+if output=$(timeout 5 ssh -T -o BatchMode=yes -o ConnectTimeout=3 gh 2>&1); then
+    status=0
+else
+    status=$?
+fi
+[[ $status == 0 || $status == 1 ]]
+[[ $output == *"successfully authenticated"* ]]

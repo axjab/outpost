@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+[[ -f $HOME/.env || -d $HOME/etc ]]

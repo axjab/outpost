@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source /usr/lib/outpost/kindling/common.sh
+
+host=$(hostname -s 2>/dev/null || hostname)
+[[ $(machine_info_value PRETTY_HOSTNAME) == "Outpost: $host" ]]
+[[ $(machine_info_value TAGS) == virtual ]]
+[[ $(machine_info_value USER) == a ]]
