@@ -1,3 +1,4 @@
+
 # OUTPOST
 
 # Node.js source
@@ -13,6 +14,7 @@ COPY --from=node /usr/local/ /usr/local/
 COPY rootfs/ /
 COPY VERSION /usr/share/outpost/version
 
+# Initialize Outpost user and filesystem
 RUN set -eu; \
     useradd --create-home --user-group --shell /bin/bash a; \
     chmod 0755 /usr/local/bin/outpost-entrypoint /usr/local/bin/outpost-kindling-status; \
@@ -42,6 +44,8 @@ RUN set -eu; \
     apt-get install -y --no-install-recommends core; \
     /bin/sh /tmp/nb-install.sh; \
     rm -f /tmp/nb-install.sh; \
+    printf '\n# Load Outpost interactive Bash scripts.\nfor script in /etc/bash.d/*.sh; do\n    [ -r "$script" ] && . "$script"\ndone\n' >> /etc/bash.bashrc; \
+    find /home/a -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +; \
     rm -rf /var/lib/apt/lists/*
 
 USER a

@@ -1,6 +1,6 @@
 services:
   outpost:
-    image: ghcr.io/axjab/outpost:0.2.2
+    image: ghcr.io/axjab/outpost:0.2.3
     container_name: outpost
     hostname: outpost
     volumes:
